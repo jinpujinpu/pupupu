@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 import re
 
+uploaded_file = st.file_uploader("上传xslx文件", type="xlsx")
+if uploaded_file is not None:
+    data = pd.read_excel(uploaded_file)
+
 # Load your dataset
 df = pd.read_excel('sephora_website_dataset.xlsx')
 
