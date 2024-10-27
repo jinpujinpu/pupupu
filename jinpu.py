@@ -1,5 +1,6 @@
-pip install openpyxl
+from pip._internal import main
 
+main (['install', 'openpyxl'])
 
 import streamlit as st
 import pandas as pd
