@@ -1,3 +1,4 @@
 openpyxl
 pandas
 scikit-learn
+matplotlib
