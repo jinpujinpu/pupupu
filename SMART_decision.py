@@ -1,5 +1,5 @@
 import pandas as pd
-from scikit-learn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler
 
 # Load dataset
 file_path = 'sephora_website_dataset.xlsx'
