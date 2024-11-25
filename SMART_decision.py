@@ -66,18 +66,24 @@ if category:
         weights = {
             'price': st.sidebar.slider("Weight for Price", 0.0, 1.0, 0.3, step=0.1),
             'rating': st.sidebar.slider("Weight for Rating", 0.0, 1.0, 0.4, step=0.1),
-            'number_of_reviews': st.sidebar.slider("Weight for Number of Reviews", 0.0, 1.0, 0.2, step=0.1),
-            'love': st.sidebar.slider("Weight for Love (Favorites)", 0.0, 1.0, 0.1, step=0.1),
+            'number_of_reviews': st.sidebar.slider("Weight for Popularity", 0.0, 1.0, 0.2, step=0.1),
+            'love': st.sidebar.slider("Weight for Favorites Count", 0.0, 1.0, 0.1, step=0.1),
         }
 
         # Normalize weights to sum to 1
         total_weight = sum(weights.values())
         normalized_weights = {k: v / total_weight for k, v in weights.items()}
 
-        # Step 3: Visualize Weights
+        # Step 3: Visualize Weights with Updated Names
         st.subheader("Your Personalized Feature Importance")
         fig, ax = plt.subplots()
-        ax.bar(normalized_weights.keys(), normalized_weights.values())
+        renamed_columns = {
+            'price': 'Price',
+            'rating': 'Rating',
+            'number_of_reviews': 'Popularity',
+            'love': 'Favorites Count'
+        }
+        ax.bar([renamed_columns[col] for col in normalized_weights.keys()], normalized_weights.values())
         ax.set_ylabel("Normalized Weight")
         ax.set_title("Feature Importance")
         st.pyplot(fig)
@@ -85,7 +91,18 @@ if category:
         # Step 4: Calculate and Display Results
         st.subheader(f"Top Products for: {category}")
         ranked_products = calculate_scores_dynamic(filtered_data, normalized_weights)
-        st.dataframe(ranked_products[['name', 'brand', 'price', 'rating', 'number_of_reviews', 'love', 'score']])
+
+        # Rename columns for display
+        display_columns = {
+            'name': 'Product Name',
+            'brand': 'Brand',
+            'price': 'Price',
+            'rating': 'Rating',
+            'number_of_reviews': 'Popularity',
+            'love': 'Favorites Count',
+            'score': 'Final Score'
+        }
+        st.dataframe(ranked_products.rename(columns=display_columns))
 
         # Optional: Save Results
         if st.button("Download Results"):
