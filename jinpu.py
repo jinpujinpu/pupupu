@@ -5,10 +5,21 @@ import streamlit as st
 import pandas as pd
 import re
 
-# Upload functionality
-uploaded_file = st.file_uploader("Upload your Excel file containing product data:", type="xlsx")
-if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file)
+# Path to the local file
+FILE_PATH = 'sephora_website_dataset.xlsx'
+
+# Load the dataset
+@st.cache_data
+def load_data():
+    try:
+        df = pd.read_excel(FILE_PATH)
+        return df
+    except FileNotFoundError:
+        st.error("The file was not found. Please ensure the file is in the same directory as this script.")
+        return None
+    except Exception as e:
+        st.error(f"An error occurred while loading the file: {e}")
+        return None
 
 # Define your allergen dictionary
 allergens = {
@@ -23,7 +34,7 @@ allergens = {
 }
 
 # Function to search for a product by name
-def search_product(product_name):
+def search_product(df, product_name):
     product = df[df['name'].str.contains(product_name, case=False, na=False)]
     if product.empty:
         return None
@@ -42,11 +53,16 @@ def check_allergens(ingredients):
 def main():
     st.title("Sephora Product Allergy Checker")
 
+    # Load the dataset
+    df = load_data()
+    if df is None:
+        return
+
     # User input: product name
     product_name = st.text_input("Enter the product name to search for:", "")
 
-    if uploaded_file is not None and product_name:
-        product = search_product(product_name)
+    if product_name:
+        product = search_product(df, product_name)
 
         if product is not None:
             st.write(f"**Product Name:** {product.iloc[0]['name']}")
